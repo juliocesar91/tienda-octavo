@@ -21,22 +21,44 @@
   </div>
   <div class="mb-3">
     <label  class="form-label">Precio</label>
-    <input type="text" name="inputPrecio"  class="form-control">
+    <input type="number" min="1" step="any" name="inputPrecio"  class="form-control">
   </div>
   <div class="mb-3">
     <label  class="form-label">Fabricante</label>
-    <input type="text" name="inputcodigo_fabricante"  class="form-control">
+    <input type="number" name="inputcodigo_fabricante"  class="form-control">
+   <!--select para los nombre de fabricantes--> 
+
+    <select name="inputcodigo_fabricante" class="form-select form-select-md mb-3" aria-label=".form-select-lg example">
+  <option selected>Abre este menú</option>
+  <?php
+  //include es importar el archivo de conexion
+  include('connection/connection.php');
+  //variable para listar todas las tablas de fabricantes
+  $consulta = "SELECT*FROM fabricante";
+  // query de conexion y query de listado
+  $resultado = mysqli_query($connection,$consulta);
+  //mientras haya algo dentro de tabla,seguira listando
+  while($fila = mysqli_fetch_array($resultado)){
+
+?>
+  <option value="<?php echo $fila["codigo"] ?>"><?php echo $fila["nombre"] ?></option>
+  <?php } ?>
+
+</select>
   </div>
   <button type="submit" name="enviar" class="btn btn-primary">Enviar</button>
+  
 </form>
     <div class="container">
     <table class="table table-dark table-striped">
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">Nombre</th>
+      <th scope="col">Nombre Producto</th>
       <th scope="col">Precio</th>
-      <th scope="col">Fabricante</th>
+      <th scope="col">Nombre Fabricante</th>
+      <th scope="col">Eliminar</th>
+      <th scope="col">Editar</th>
     </tr>
   </thead>
   <tbody>
@@ -48,7 +70,10 @@
   include('connection/connection.php');
 
   //variable para listar todas las tablas de fabricantes
-  $consulta = "SELECT*FROM producto";
+  $consulta = "SELECT producto.codigo AS codigo_producto,producto.nombre as nombre_producto,
+  producto.precio as precio_producto,
+  fabricante.nombre as nombre_fabricante 
+  FROM producto INNER JOIN fabricante ON producto.codigo_fabricante = fabricante.codigo";
   // query de conexion y query de listado
   $resultado = mysqli_query($connection,$consulta);
   //mientras haya algo dentro de tabla,seguira listando
@@ -57,10 +82,12 @@
 
 ?>
     <tr>
-    <th scope="row"><?php echo $fila["codigo"] ?></th>
-    <td><?php echo $fila["nombre"] ?></td>
-    <td><?php echo $fila["precio"] ?></td>
-    <td><?php echo $fila["codigo_fabricante"] ?></td>
+    <th scope="row"><?php echo $fila["codigo_producto"] ?></th>
+    <td><?php echo $fila["nombre_producto"] ?></td>
+    <td><?php echo $fila["precio_producto"] ?></td>
+    <td><?php echo $fila["nombre_fabricante"] ?></td>
+    <td><a href="action/deleteProducto.php?id=<?php echo $fila["codigo_producto"] ?>" class="btn btn-danger">Eliminar</a></td>
+    <td><a class="btn btn-warning">Editar</a></td>
     
   </tr>
 
